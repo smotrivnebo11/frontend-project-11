@@ -1,0 +1,42 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "RSS agregator",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "NODE_ENV=development webpack",
+    "build": "NODE_ENV=production webpack",
+    "start": "NODE_ENV=development webpack serve",
+    "watch": "webpack --mode watch"
+  },
+  "author": "Elena Poltanova",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^6.7.4",
+    "eslint": "^8.41.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-babel": "^5.3.1",
+    "eslint-plugin-import": "^2.27.5",
+    "html-webpack-plugin": "^5.5.1",
+    "mini-css-extract-plugin": "^2.7.6",
+    "postcss-loader": "^7.3.0",
+    "postcss-preset-env": "^8.4.1",
+    "sass": "^1.62.1",
+    "sass-loader": "^13.2.2",
+    "style-loader": "^3.3.3",
+    "webpack": "^5.83.1",
+    "webpack-cli": "^5.1.1",
+    "webpack-dev-server": "^4.15.0"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.7",
+    "axios": "^1.4.0",
+    "bootstrap": "^5.2.3",
+    "i18next": "^22.5.0",
+    "lodash": "^4.17.21",
+    "on-change": "^4.0.2",
+    "yup": "^1.1.1"
+  }
+}
