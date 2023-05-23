@@ -15,8 +15,8 @@ export default {
     main: './src/js/index.js',
   },
   output: {
-    filename: "[name].[contenthash].js",
-    assetModuleFilename: "asset/[hash][ext][query]",
+    filename: '[name].[contenthash].js',
+    assetModuleFilename: 'asset/[hash][ext][query]',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
   },
@@ -28,10 +28,10 @@ export default {
   },
   plugins: [
     new HTMLWebpackPlugin({
-      template: 'index.html',
+      template: './index.html',
     }),
     new MiniCssExtractPlugin({
-      filename: "index.html",
+      filename: '[name].[contenthash].css',
     })
   ],
   module: {
