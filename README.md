@@ -6,3 +6,4 @@
 [![Node CI](https://github.com/smotrivnebo11/frontend-project-11/actions/workflows/node-check.yaml/badge.svg)](https://github.com/smotrivnebo11/frontend-project-11/actions/workflows/node-check.yaml)
 
 RSS: http://localhost:5001
+https://frontend-project-11-nu-two.vercel.app
