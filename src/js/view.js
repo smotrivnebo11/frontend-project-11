@@ -32,11 +32,10 @@ const renderError = (elements, error, initialState) => {
   }
   elements.feedback.classList.add('text-danger');
   elements.feedback.classList.remove('text-success');
-  // elements.feedback.textContent = error.message;
+  elements.feedback.textContent = error.message;
 };
 
-export default (initialState, elements) => (path, value, prevValue) => {
-  // i18nInstance
+export default (initialState, elements, i18nInstance) => (path, value, prevValue) => {
   // const renderPosts = () => {
   //     container.innerHTML = '';
   //     const buttons = state.posts.map();
@@ -79,7 +78,7 @@ export default (initialState, elements) => (path, value, prevValue) => {
 //       renderForm();
 //       break;
 //   }
-//   default: 
+//   default:
 //   // ссылка
 //   throw new Error(Unknow node: ${state.mode});
 // }

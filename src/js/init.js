@@ -1,24 +1,26 @@
 // инициалищация приложения === импорты и библиотека i18next
 
 import i18n from 'i18next';
-import resources from './locales/index.js';
+import { setLocale } from 'yup';
+import application from './app.js';
+import resources from '../locales/index.js';
 
-export default async (container, initialState = {}) => {
-  // BEGIN (write your solution here)
+export default () => {
   const defaultLanguage = 'ru';
-
-  const state = {
-    lng: defaultLanguage,
-    clicksCount: 0,
-    ...initialState,
-  };
-
   const i18nInstance = i18n.createInstance();
 
-  await i18nInstance.init({
-    lng: state.lng,
-    debug: false,
-    resources,
+  setLocale({
+    mixed: {
+      notOneOf: 'doubleRss',
+    },
+    string: {
+      url: 'invalidUrl',
+    },
   });
 
+  i18nInstance.init({
+    language: defaultLanguage,
+    debug: true,
+    resources,
+  }).then(() => application(i18nInstance));
 };

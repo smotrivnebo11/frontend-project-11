@@ -15,7 +15,7 @@ const validateURL = (url, existedUrls) => {
   // returns a Promise object, that is fulfilled with the value, or rejected with a ValidationError.
 };
 
-export default () => { // основная функция
+export default (i18nInstance) => { // основная функция
   const elements = {
     form: document.querySelector('.rss-form'),
     input: document.querySelector('.form-control'),
@@ -43,8 +43,7 @@ export default () => { // основная функция
     existedUrls: [], // те урлы которые уже вводили
   };
 
-  const watchedState = onChange(initialState, render(elements, initialState));
-  // , i18nInstance
+  const watchedState = onChange(initialState, render(elements, initialState, i18nInstance));
 
   // elements.input.addEventListener('input', (event) => {
   //   event.preventDefault();

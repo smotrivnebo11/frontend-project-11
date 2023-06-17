@@ -22,6 +22,7 @@ export default {
   },
   devtool: 'source-map', // нужно для отладки кода в devtools
   devServer: {
+    host: 'localhost',
     static: path.resolve(__dirname, 'dist'),
     port: 5001,
     hot: true
