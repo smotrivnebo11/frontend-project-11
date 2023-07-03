@@ -19,7 +19,7 @@ export default () => {
   });
 
   i18nInstance.init({
-    language: defaultLanguage,
+    lng: defaultLanguage,
     debug: true,
     resources,
   }).then(() => application(i18nInstance));

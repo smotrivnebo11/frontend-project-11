@@ -2,17 +2,26 @@
 
 import onChange from 'on-change';
 // import { container } from 'webpack';
+import _ from 'lodash';
 import * as yup from 'yup';
-// import axios from 'axios';
+import axios from 'axios';
 import render from './view.js';
-// import parse from './parser.js';
+import parse from '../utils/parser.js';
 
 // проверяемый урл и список урлов которые уже были загружены
 const validateURL = (url, existedUrls) => {
   // схема валидации: строка, урл, не один из списка уже загруженных
   const schema = yup.string().url().notOneOf(existedUrls);
   return schema.validate(url); // асинхронный метод
-  // returns a Promise object, that is fulfilled with the value, or rejected with a ValidationError.
+  // returns a Promise object, that is fulfilled with the VALUE, or rejected with a ValidationError.
+};
+
+const getOriginsProxy = (url) => { // прокси прослойка между пользователем и сервером
+  const originsproxy = 'https://allorigins.hexlet.app/get';
+  const rssUrl = new URL(originsproxy);
+  rssUrl.searchParams.set('url', url);
+  rssUrl.searchParams.set('disableCache', 'true');
+  return axios.get(rssUrl);
 };
 
 export default (i18nInstance) => { // основная функция
@@ -33,10 +42,10 @@ export default (i18nInstance) => { // основная функция
 
   const initialState = { // Modal
     form: {
-      // inputRss: '',
+      // inputRss: '', // то, что ввел пользователь
       valid: true, // false
       processState: 'filling', // sending, sent, error
-      errors: {}, // ошибка выдается уже после submit
+      error: '', // ошибка выдается уже после submit
     },
     posts: [],
     feeds: [],
@@ -54,22 +63,41 @@ export default (i18nInstance) => { // основная функция
 
   elements.form.addEventListener('submit', (event) => {
     event.preventDefault();
-    const data = new FormData(event.target);
-    const urlRss = data.get('url').trim();
+    const formData = new FormData(event.target);
+    const inputURL = formData.get('url').trim(); // то, что ввел пользователь
 
     // сравниваем наш урл с теми урлами которые уже есть чтобы избежать дублирования
-    validateURL(urlRss, watchedState.existedUrls)
+    validateURL(inputURL, watchedState.existedUrls)
       .then(() => {
         watchedState.form.valid = true;
         watchedState.form.processState = 'sending';
+        return getOriginsProxy(inputURL);
+      })
+      .then((response) => {
+        const content = response.data.contents;
+        console.log(content);
+        watchedState.existedUrls.push(inputURL);
+        const { feed, posts } = parse(content);
+        console.log(posts);
+        const feedId = _.uniqueId();
+        watchedState.feeds.push({ ...feed, id: feedId, link: inputURL });
+        const extractedPosts = posts.map((post) => ({ ...post, feedId, id: _.uniqueId() }));
+        watchedState.posts.push(...watchedState.posts, ...extractedPosts);
+        console.log('extractedPosts', extractedPosts);
+        console.log('posts', watchedState.posts);
+        console.log('feeds', watchedState.feeds);
+        watchedState.form.processState = 'sent'; // success
+        // присвоить id фидам и добавить фиды и посты в соответствующие массивы в watched state
+        // у поста будет id фида и его id, а у фида только id самого фида
       })
       .catch((error) => {
         watchedState.form.valid = false;
-        watchedState.form.errors = error.message ?? 'defaultError';
+        watchedState.form.error = error.message ?? 'defaultError';
         watchedState.form.processState = 'error';
       });
     // loadRss(url);
   });
+  console.log('posts', watchedState.posts);
 };
 
 // const wachedState = watch(initialState, elements, i18nInstance);
