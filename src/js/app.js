@@ -24,6 +24,31 @@ const getOriginsProxy = (url) => { // прокси прослойка между
   return axios.get(rssUrl);
 };
 
+const makePosts = (watchedState, posts, feedId) => {
+  const extractedPosts = posts.map((post) => ({ ...post, feedId, id: _.uniqueId() }));
+  watchedState.posts.push(...watchedState.posts, ...extractedPosts);
+};
+
+const updateRss = (watchedState) => {
+  const feedPromises = watchedState.feeds
+    .map(({ id, link }) => getOriginsProxy(link)
+      .then((response) => {
+        const { posts } = parse(response.data.contents);
+        const uploadedPosts = watchedState.posts((post) => post.link);
+        const newPosts = posts.filter((post) => !uploadedPosts.includes(post.link));
+        if (newPosts.length > 0) {
+          makePosts(watchedState, newPosts, id);
+          // watchedState.posts.push(...newPosts);
+        }
+        return Promise.resolve();
+      }));
+
+  Promise.allSettled(feedPromises)
+    .finally(() => {
+      setTimeout(() => updateRss(watchedState), 5000);
+    });
+};
+
 export default (i18nInstance) => { // основная функция
   const elements = {
     form: document.querySelector('.rss-form'),
@@ -53,6 +78,7 @@ export default (i18nInstance) => { // основная функция
   };
 
   const watchedState = onChange(initialState, render(elements, initialState, i18nInstance));
+  updateRss(watchedState);
 
   // elements.input.addEventListener('input', (event) => {
   //   event.preventDefault();
@@ -78,15 +104,12 @@ export default (i18nInstance) => { // основная функция
         console.log(content);
         watchedState.existedUrls.push(inputURL);
         const { feed, posts } = parse(content);
-        console.log(posts);
         const feedId = _.uniqueId();
         watchedState.feeds.push({ ...feed, id: feedId, link: inputURL });
-        const extractedPosts = posts.map((post) => ({ ...post, feedId, id: _.uniqueId() }));
-        watchedState.posts.push(...watchedState.posts, ...extractedPosts);
-        console.log('extractedPosts', extractedPosts);
-        console.log('posts', watchedState.posts);
-        console.log('feeds', watchedState.feeds);
-        watchedState.form.processState = 'sent'; // success
+        // const extractedPosts = posts.map((post) => ({ ...post, feedId, id: _.uniqueId() }));
+        // watchedState.posts.push(...watchedState.posts, ...extractedPosts);
+        makePosts(watchedState, posts, feedId);
+        watchedState.form.processState = 'sent'; // success === fulfilled
         // присвоить id фидам и добавить фиды и посты в соответствующие массивы в watched state
         // у поста будет id фида и его id, а у фида только id самого фида
       })
@@ -103,8 +126,6 @@ export default (i18nInstance) => { // основная функция
 // const wachedState = watch(initialState, elements, i18nInstance);
 
 // const loadRss = (url, wachedState) => {};
-
-// const updateRss = (wachedState) => {};
 
 // elements.postsContainer.addEventListener('click', () => {
 //   //меняем состояние
