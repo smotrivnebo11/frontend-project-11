@@ -4,6 +4,7 @@ export default {
     feedback: {
       success: 'RSS успешно загружен',
       errors: {
+        defaultError: 'Неверные данные',
         network: 'Ошибка сети', // ошибка сервера - axios
         doubleRss: 'RSS уже существует',
         invalidUrl: 'Ссылка должна быть валидным URL',

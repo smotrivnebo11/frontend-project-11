@@ -59,7 +59,7 @@ const buildFeeds = (watchedState, elements, i18nInstance) => {
 };
 
 const buildPosts = (watchedState, elements, i18nInstance) => {
-  console.log('buildposts', watchedState.posts);
+  // console.log('buildposts', watchedState.posts);
   elements.posts.innerHTML = '';
   const { cardBorder, ul } = buildContainer('posts', i18nInstance);
   // const ul = document.createElement('ul');
@@ -70,15 +70,18 @@ const buildPosts = (watchedState, elements, i18nInstance) => {
     li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
 
     const { title, id, link } = post;
-    console.log(title, id, link);
-    console.log('post', post);
-    console.log('id', post.id);
-    console.log('title', post.title);
-    console.log('link', post.link);
+    // console.log(title, id, link);
+    // console.log('post', post);
+    // console.log('id', post.id);
+    // console.log('title', post.title);
+    // console.log('link', post.link);
 
     const a = document.createElement('a');
     a.setAttribute('href', link);
-    a.classList.add('fw-bold');
+    // a.classList.add('fw-bold');
+    a.classList.add(watchedState.uiState.visitedPostId.has(id) ? ('fw-normal', 'link-secondary') : 'fw-bold');
+    // Метод has() возвращает логическое значение, показывающее, существует ли элемент
+    // с указанным значением в объекте Set или нет.
     a.setAttribute('data-id', id);
     a.setAttribute('target', '_blank');
     a.setAttribute('rel', 'noopener noreferrer');
@@ -97,6 +100,20 @@ const buildPosts = (watchedState, elements, i18nInstance) => {
   });
 
   elements.posts.append(cardBorder);
+};
+
+const handleModal = (elements, watchedState, postId) => {
+  console.log('modalPosts', watchedState.posts);
+  console.log('watchedState', watchedState);
+  const pickedPost = watchedState.posts.find(({ id }) => id === postId);
+  // Метод find() возвращает значение первого найденного в массиве элемента,
+  // которое удовлетворяет условию переданному в callback функции.
+  // В противном случае возвращается undefined.
+  const { title, description, link } = pickedPost;
+
+  elements.modal.head.textContent = title;
+  elements.modal.body.textContent = description;
+  elements.modal.linkButton.setAttribute('href', link);
 };
 
 const handleSusscess = (elements, i18nInstance) => {
@@ -119,7 +136,7 @@ const handleError = (elements, error, i18nInstance, watchedState) => {
 
 const handleProcessState = (elements, processState, watchedState, i18nInstance) => {
   switch (processState) {
-    case 'sent':
+    case 'sent': // fulfilled
       elements.submitButton.disabled = false;
       handleSusscess(elements, i18nInstance);
       break;
@@ -145,6 +162,7 @@ const handleProcessState = (elements, processState, watchedState, i18nInstance) 
 };
 
 export default (elements, watchedState, i18nInstance) => (path, value) => {
+  console.log('FindwatchedState', watchedState);
   // const renderPosts = () => {
   //     container.innerHTML = '';
   //     const buttons = state.posts.map();
@@ -171,10 +189,15 @@ export default (elements, watchedState, i18nInstance) => (path, value) => {
 
     case 'posts':
       buildPosts(watchedState, elements, i18nInstance);
+      console.log('buildposts', watchedState.posts);
       break;
 
     case 'feeds':
       buildFeeds(watchedState, elements, i18nInstance);
+      break;
+
+    case 'uiState.modalPostId':
+      handleModal(watchedState, elements, value);
       break;
 
     default:

@@ -59,6 +59,7 @@ export default (i18nInstance) => { // основная функция
     feeds: document.querySelector('.feeds'),
     postsButtons: document.querySelector('button[data-bs-target="#modal"]'),
     modal: {
+      modalElement: document.querySelector('.modal'),
       head: document.querySelector('.modal-title'),
       body: document.querySelector('.modal-body'),
       linkButton: document.querySelector('.modal-footer > .full-article'),
@@ -71,6 +72,10 @@ export default (i18nInstance) => { // основная функция
       valid: true, // false
       processState: 'filling', // sending, sent, error
       error: '', // ошибка выдается уже после submit
+    },
+    uiState: {
+      modalPostId: '',
+      visitedPostId: new Set(), // объект для хранения уникальных значений
     },
     posts: [],
     feeds: [],
@@ -101,7 +106,7 @@ export default (i18nInstance) => { // основная функция
       })
       .then((response) => {
         const content = response.data.contents;
-        console.log(content);
+        // console.log(content);
         watchedState.existedUrls.push(inputURL);
         const { feed, posts } = parse(content);
         const feedId = _.uniqueId();
@@ -120,15 +125,19 @@ export default (i18nInstance) => { // основная функция
       });
     // loadRss(url);
   });
-  console.log('posts', watchedState.posts);
+  // console.log('posts', watchedState.posts);
+
+  elements.modal.modalElement.addEventListener('show.bs.modal', (event) => {
+    // связь модального окна с посещенным постом
+    const postId = event.relatedTarget.getAttribute('data-id');
+    watchedState.uiState.visitedPostId.add(postId);
+    watchedState.uiState.modalPostId = postId;
+  });
+
+  elements.posts.addEventListener('click', (event) => {
+    const postId = event.target.dataset.id;
+    if (postId) {
+      watchedState.uiState.visitedPostId.add(postId);
+    }
+  });
 };
-
-// const wachedState = watch(initialState, elements, i18nInstance);
-
-// const loadRss = (url, wachedState) => {};
-
-// elements.postsContainer.addEventListener('click', () => {
-//   //меняем состояние
-// });
-
-// updateRss(wachedState);

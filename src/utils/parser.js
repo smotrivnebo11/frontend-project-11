@@ -22,6 +22,6 @@ export default (data) => {
     return post;
   });
 
-  console.log(channel.innerHTML);
+  // console.log(channel.innerHTML);
   return { feed, posts };
 };
