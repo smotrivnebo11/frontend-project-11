@@ -8,6 +8,8 @@ import axios from 'axios';
 import render from './view.js';
 import parse from '../utils/parser.js';
 
+const timeout = 5000;
+
 // проверяемый урл и список урлов которые уже были загружены
 const validateURL = (url, existedUrls) => {
   // схема валидации: строка, урл, не один из списка уже загруженных
@@ -31,13 +33,14 @@ const makePosts = (watchedState, posts, feedId) => {
 
 const updateRss = (watchedState) => {
   const feedPromises = watchedState.feeds
-    .map(({ id, link }) => getOriginsProxy(link)
+    .map(({ feedId, link }) => getOriginsProxy(link)
       .then((response) => {
         const { posts } = parse(response.data.contents);
-        const uploadedPosts = watchedState.posts((post) => post.link);
+        const uploadedPosts = watchedState.posts.map((post) => post.link);
         const newPosts = posts.filter((post) => !uploadedPosts.includes(post.link));
+        console.log('newPosts', newPosts);
         if (newPosts.length > 0) {
-          makePosts(watchedState, newPosts, id);
+          makePosts(watchedState, newPosts, feedId);
           // watchedState.posts.push(...newPosts);
         }
         return Promise.resolve();
@@ -45,7 +48,7 @@ const updateRss = (watchedState) => {
 
   Promise.allSettled(feedPromises)
     .finally(() => {
-      setTimeout(() => updateRss(watchedState), 5000);
+      setTimeout(() => updateRss(watchedState), timeout);
     });
 };
 
@@ -131,6 +134,7 @@ export default (i18nInstance) => { // основная функция
     // связь модального окна с посещенным постом
     const postId = event.relatedTarget.getAttribute('data-id');
     watchedState.uiState.visitedPostId.add(postId);
+    console.log('postId', watchedState.uiState.visitedPostId);
     watchedState.uiState.modalPostId = postId;
   });
 
