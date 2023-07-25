@@ -20,33 +20,6 @@
       steps:
         # Check-out repository under GitHub workspace
         # https://github.com/actions/checkout
-<<<<<<< HEAD:.github/workflows/node-check.yaml
-      - uses: actions/checkout@v3
-        # Step's name
-      - name: Use Node.js ${{ matrix.node-version }}
-        # Configures the node version used on GitHub-hosted runners
-        # https://github.com/actions/setup-node
-        uses: actions/setup-node@v3
-        # The Node.js version to configure
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - run: make install
-      - run: make build
-      - run: make lint
-      - run: make test
-      - name: Test & publish code coverage
-      #   # Publish code coverage on Code Climate
-      #   # https://github.com/paambaati/codeclimate-action
-        uses: paambaati/codeclimate-action@v3.0.0
-      #   # Add Code Climate secret key
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        with:
-          coverageCommand: make test-coverage
-      #   coverageLocations: ${{github.workplace}}/build/logs/clover.xml:clover
-          debug: true
-=======
         - uses: actions/checkout@v3
           # Step's name
         - name: Use Node.js ${{ matrix.node-version }}
@@ -68,4 +41,3 @@
 
         - name: Run linter
           run: make lint
->>>>>>> 7998bdd (step 1 change readme):.github/workflows/node.js.yaml

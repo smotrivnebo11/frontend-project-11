@@ -9,7 +9,7 @@ export default {
         doubleRss: 'RSS уже существует',
         invalidUrl: 'Ссылка должна быть валидным URL',
         invalidRss: 'Ресурс не содержит валидный RSS', // ошибка парсинга
-        emptyField: 'Поле не должно быть пустым',
+        emptyField: 'Не должно быть пустым',
       },
     },
     posts: 'Посты',
