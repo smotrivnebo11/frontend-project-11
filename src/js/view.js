@@ -142,13 +142,19 @@ const handleSusscess = (elements, i18nInstance) => {
   elements.input.focus();
 };
 
-const handleError = (elements, error, i18nInstance, watchedState) => {
-  if (watchedState.form.valid === false) {
-    elements.input.classList.add('is-invalid');
-  }
+const handleError = (elements, error, i18nInstance) => {
+  // if (watchedState.form.valid === false) {
+  //   elements.input.classList.add('is-invalid');
+  // }
   elements.feedback.classList.add('text-danger');
   elements.feedback.classList.remove('text-success');
-  elements.feedback.textContent = i18nInstance.t(`feedback.errors.${error}`);
+  elements.feedback.textContent = i18nInstance.t(`feedback.errors.${error.replace(/ /g, '')}`);
+  if (error !== 'Network Error') {
+    elements.input.classList.add('is-invalid');
+  }
+
+  elements.submitButton.disabled = false;
+  elements.input.disabled = false;
 };
 
 const handleProcessState = (elements, processState, watchedState, i18nInstance) => {
@@ -201,7 +207,7 @@ export default (elements, watchedState, i18nInstance) => (path, value) => {
 
     case 'form.error':
       // запускает функцию для обработки ошибок
-      handleError(elements, watchedState.form.error, i18nInstance, watchedState);
+      handleError(elements, watchedState.form.error, i18nInstance);
       break;
 
     case 'uiState.modalPostId':

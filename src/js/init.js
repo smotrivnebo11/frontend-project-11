@@ -15,6 +15,7 @@ export default () => {
     },
     string: {
       url: 'invalidUrl',
+      required: 'emptyField',
     },
   });
 
