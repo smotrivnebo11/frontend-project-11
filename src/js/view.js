@@ -137,7 +137,7 @@ const handleSusscess = (elements, i18nInstance) => {
   elements.feedback.classList.add('text-success');
   elements.feedback.classList.remove('text-danger');
   elements.input.classList.remove('is-invalid');
-  elements.feedback.textContent = i18nInstance.t('feedback.success');
+  elements.feedback.textContent = i18nInstance.t('success');
   elements.form.reset();
   elements.input.focus();
 };
@@ -148,7 +148,7 @@ const handleError = (elements, error, i18nInstance) => {
   // }
   elements.feedback.classList.add('text-danger');
   elements.feedback.classList.remove('text-success');
-  elements.feedback.textContent = i18nInstance.t(`feedback.errors.${error.replace(/ /g, '')}`);
+  elements.feedback.textContent = i18nInstance.t(`errors.${error.replace(/ /g, '')}`);
   if (error !== 'Network Error') {
     elements.input.classList.add('is-invalid');
   }
