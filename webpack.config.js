@@ -7,10 +7,8 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const mode = process.env.NODE_ENV === 'development' ? 'development' : 'production';
-
 export default {
-  mode: mode,
+  mode: process.env.NODE_ENV || 'development',
   entry: {
     main: './src/js/index.js',
   },
@@ -35,37 +33,32 @@ export default {
       filename: '[name].[contenthash].css',
     })
   ],
-  // performance: {
-  //   hints: false,
-  //   maxEntrypointSize: 512000,
-  //   maxAssetSize: 512000
-  // },
+  performance: {
+    hints: false,
+  },
   module: {
     rules: [
       {
-        test: /\.(sa|sc|c)ss$/,
-        use: [
-          (mode === "development") ? 'style-loader' : MiniCssExtractPlugin.loader,
-          'css-loader',
-          {
-            loader: "postcss-loader",
-            options: {
-              postcssOptions: {
-                plugins: [
-                  [
-                    'postcss-preset-env',
-                    {
-                      // options  
-                    },
-                  ],
-                ],
-              },
-            },
-          },
-          'sass-loader',
-        ],
+        test: /\.(js|jsx)$/i,
+        loader: 'babel-loader',
       },
-    ]
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
+      },
+      {
+        test: /\.scss$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader', 'postcss-loader'],
+      },
+      {
+        test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        use: 'url-loader?limit=10000',
+      },
+      {
+        test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
+        use: 'file-loader',
+      },
+    ],
   },
 
 };
