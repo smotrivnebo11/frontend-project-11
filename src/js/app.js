@@ -1,7 +1,6 @@
 // дефолтная функция и контроллеры, initial state === Modal & Controllers
 
 import onChange from 'on-change';
-// import { container } from 'webpack';
 import _ from 'lodash';
 import * as yup from 'yup';
 import axios from 'axios';
@@ -38,10 +37,8 @@ const updateRss = (watchedState) => {
         const { posts } = parse(response.data.contents);
         const uploadedPosts = watchedState.posts.map((post) => post.link);
         const newPosts = posts.filter((post) => !uploadedPosts.includes(post.link));
-        console.log('newPosts', newPosts);
         if (newPosts.length > 0) {
           makePosts(watchedState, newPosts, feedId);
-          // watchedState.posts.push(...newPosts);
         }
         return Promise.resolve();
       }));
@@ -71,7 +68,6 @@ export default (i18nInstance) => { // основная функция
 
   const initialState = { // Modal
     form: {
-      // inputRss: '', // то, что ввел пользователь
       valid: true, // false
       processState: 'filling', // sending, sent, error
       error: '', // ошибка выдается уже после submit
@@ -88,13 +84,6 @@ export default (i18nInstance) => { // основная функция
   const watchedState = onChange(initialState, render(elements, initialState, i18nInstance));
   updateRss(watchedState);
 
-  // elements.input.addEventListener('input', (event) => {
-  //   event.preventDefault();
-  //   // записываем в наблюдаемое состояние введенное пользователем в инпут значение
-  //   watchedState.form.inputRss = event.target.value;
-  //   watchedState.form.processState = 'filling';
-  // });
-
   elements.form.addEventListener('submit', (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -109,15 +98,12 @@ export default (i18nInstance) => { // основная функция
       })
       .then((response) => {
         const content = response.data.contents;
-        // console.log(content);
         watchedState.existedUrls.push(inputURL);
         const { feed, posts } = parse(content);
         const feedId = _.uniqueId();
         watchedState.feeds.push({ ...feed, id: feedId, link: inputURL });
-        // const extractedPosts = posts.map((post) => ({ ...post, feedId, id: _.uniqueId() }));
-        // watchedState.posts.push(...watchedState.posts, ...extractedPosts);
         makePosts(watchedState, posts, feedId);
-        watchedState.form.processState = 'sent'; // success === fulfilled
+        watchedState.form.processState = 'sent'; // success
         // присвоить id фидам и добавить фиды и посты в соответствующие массивы в watched state
         // у поста будет id фида и его id, а у фида только id самого фида
       })
@@ -126,15 +112,12 @@ export default (i18nInstance) => { // основная функция
         watchedState.form.error = error.message ?? 'defaultError';
         watchedState.form.processState = 'error';
       });
-    // loadRss(url);
   });
-  // console.log('posts', watchedState.posts);
 
   elements.modal.modalElement.addEventListener('show.bs.modal', (event) => {
     // связь модального окна с посещенным постом
     const postId = event.relatedTarget.getAttribute('data-id');
     watchedState.uiState.visitedPostId.add(postId);
-    console.log('postId', watchedState.uiState.visitedPostId);
     watchedState.uiState.modalPostId = postId;
   });
 

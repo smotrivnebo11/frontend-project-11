@@ -1,8 +1,5 @@
 // перерисовка === рендер === View
 const buildFeeds = (watchedState, element) => {
-  console.log('FEEDelement', element);
-  // elements.feeds.innerHTML = '';
-  // const { cardBorder, ul } = buildContainer('feeds', i18nInstance);
   const ul = document.createElement('ul');
   ul.classList.add('list-group', 'border-0', 'rounded-0');
 
@@ -24,15 +21,10 @@ const buildFeeds = (watchedState, element) => {
     ul.append(li);
   });
 
-  // elements.feeds.append(ul);
   element.append(ul);
 };
 
 const buildPosts = (watchedState, element, i18nInstance) => {
-  console.log('POSTelement', element);
-  // console.log('buildposts', watchedState.posts);
-  // elements.posts.innerHTML = '';
-  // const { cardBorder, ul } = buildContainer('posts', i18nInstance);
   const ul = document.createElement('ul');
   ul.classList.add('list-group', 'border-0', 'rounded-0');
 
@@ -41,20 +33,9 @@ const buildPosts = (watchedState, element, i18nInstance) => {
     li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
 
     const { title, id, link } = post;
-    // console.log(title, id, link);
-    // console.log('post', post);
-    // console.log('id', post.id);
-    // console.log('title', post.title);
-    // console.log('link', post.link);
 
     const a = document.createElement('a');
     a.setAttribute('href', link);
-    // a.classList.add('fw-bold');
-    // eslint-disable-next-line max-len
-    // a.classList.add(watchedState.uiState.visitedPostId.has(id) ? ('fw-normal', 'link-secondary') : 'fw-bold');
-    // Метод has() возвращает логическое значение, показывающее, существует ли элемент
-    // с указанным значением в объекте Set или нет.
-    console.log('HAS', watchedState.uiState.visitedPostId.has(id));
     if (watchedState.uiState.visitedPostId.has(id)) {
       a.classList.add('fw-normal', 'link-secondary');
     } else {
@@ -77,7 +58,6 @@ const buildPosts = (watchedState, element, i18nInstance) => {
     ul.append(li);
   });
 
-  // elements.posts.append(ul);
   element.append(ul);
 };
 
@@ -99,29 +79,14 @@ const buildContainer = (type, watchedState, elements, i18nInstance) => {
   h2.classList.add('card-title', 'h4');
   h2.textContent = i18nInstance.t(type);
 
-  // const ul = document.createElement('ul');
-  // ul.classList.add('list-group', 'border-0', 'rounded-0');
-  // cardBorder.replaceChildren(cardBody, ul);
-  // return { cardBorder, ul };
-
   cardBody.append(h2);
   cardBorder.append(cardBody);
   elements[type].append(cardBorder);
   mapping[type](cardBorder);
   // полиморфизм для buildPosts и BuildFeeds
-
-  // if (type === 'posts') {
-  //   renderPosts(state, divCard, i18nInstance);
-  // }
-
-  // if (type === 'feeds') {
-  //   renderFeeds(state, divCard);
-  // }
 };
 
 const handleModal = (watchedState, elements, postId) => {
-  // console.log('modalPosts', watchedState.posts);
-  // console.log('watchedState', watchedState);
   const pickedPost = watchedState.posts.find(({ id }) => id === postId);
   // Метод find() возвращает значение первого найденного в массиве элемента,
   // которое удовлетворяет условию переданному в callback функции.
@@ -143,9 +108,6 @@ const handleSusscess = (elements, i18nInstance) => {
 };
 
 const handleError = (elements, error, i18nInstance) => {
-  // if (watchedState.form.valid === false) {
-  //   elements.input.classList.add('is-invalid');
-  // }
   elements.feedback.classList.add('text-danger');
   elements.feedback.classList.remove('text-success');
   elements.feedback.textContent = i18nInstance.t(`feedback.errors.${error.replace(/ /g, '')}`);
@@ -159,7 +121,7 @@ const handleError = (elements, error, i18nInstance) => {
 
 const handleProcessState = (elements, processState, watchedState, i18nInstance) => {
   switch (processState) {
-    case 'sent': // fulfilled
+    case 'sent': // success
       elements.submitButton.disabled = false;
       handleSusscess(elements, i18nInstance);
       break;
@@ -185,13 +147,6 @@ const handleProcessState = (elements, processState, watchedState, i18nInstance) 
 };
 
 export default (elements, watchedState, i18nInstance) => (path, value) => {
-  // console.log('FindwatchedState', watchedState);
-  // const renderPosts = () => {
-  //     container.innerHTML = '';
-  //     const buttons = state.posts.map();
-
-  //     container.append(...buttons);
-  // }
   switch (path) {
     // path - ключи в state
     // в зависимости от значения ключа в state мы делаем манипуляции
@@ -220,40 +175,13 @@ export default (elements, watchedState, i18nInstance) => (path, value) => {
 
     case 'posts':
       buildContainer('posts', watchedState, elements, i18nInstance);
-      // buildPosts(watchedState, elements, i18nInstance);
-      // console.log('buildposts', watchedState.posts);
       break;
 
     case 'feeds':
       buildContainer('feeds', watchedState, elements, i18nInstance);
-      // buildFeeds(watchedState, elements, i18nInstance);
       break;
 
     default:
       break;
   }
 };
-
-// const renderForm = () => {
-//   return i18nInstance.t('required');
-// };
-
-// switch (state.mode) {
-//   case 'posts': {
-//       renderPosts();
-//       break;
-//   }
-//   case 'form': {
-//       renderForm();
-//       break;
-//   }
-//   default:
-//   // ссылка
-//   throw new Error(Unknow node: ${state.mode});
-// }
-
-// const wachedState = onChange(initialState, (path, value, previousValue) => {
-//   render(wachedState, elements, i18nInstance);
-// });
-
-// return wachedState;
