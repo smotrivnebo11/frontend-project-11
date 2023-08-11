@@ -7,7 +7,7 @@ import axios from 'axios';
 import render from './view.js';
 import parse from '../utils/parser.js';
 
-const timeout = 5000;
+const timeOut = 5000;
 
 // проверяемый урл и список урлов которые уже были загружены
 const validateURL = (url, existedUrls) => {
@@ -18,8 +18,8 @@ const validateURL = (url, existedUrls) => {
 };
 
 const getOriginsProxy = (url) => { // прокси прослойка между пользователем и сервером
-  const originsproxy = 'https://allorigins.hexlet.app/get';
-  const rssUrl = new URL(originsproxy);
+  const originsProxy = 'https://allorigins.hexlet.app/get';
+  const rssUrl = new URL(originsProxy);
   rssUrl.searchParams.set('url', url);
   rssUrl.searchParams.set('disableCache', 'true');
   return axios.get(rssUrl);
@@ -45,7 +45,7 @@ const updateRss = (watchedState) => {
 
   Promise.allSettled(feedPromises)
     .finally(() => {
-      setTimeout(() => updateRss(watchedState), timeout);
+      setTimeout(() => updateRss(watchedState), timeOut);
     });
 };
 
@@ -67,8 +67,8 @@ export default (i18nInstance) => { // основная функция
   };
 
   const initialState = { // Modal
-    form: {
-      valid: true, // false
+    valid: true, // false
+    process: {
       processState: 'filling', // sending, sent, error
       error: '', // ошибка выдается уже после submit
     },
@@ -92,8 +92,8 @@ export default (i18nInstance) => { // основная функция
     // сравниваем наш урл с теми урлами которые уже есть чтобы избежать дублирования
     validateURL(inputURL, watchedState.existedUrls)
       .then(() => {
-        watchedState.form.valid = true;
-        watchedState.form.processState = 'sending';
+        watchedState.valid = true;
+        watchedState.process.processState = 'sending';
         return getOriginsProxy(inputURL);
       })
       .then((response) => {
@@ -103,14 +103,14 @@ export default (i18nInstance) => { // основная функция
         const feedId = _.uniqueId();
         watchedState.feeds.push({ ...feed, id: feedId, link: inputURL });
         makePosts(watchedState, posts, feedId);
-        watchedState.form.processState = 'sent'; // success
+        watchedState.process.processState = 'sent'; // success
         // присвоить id фидам и добавить фиды и посты в соответствующие массивы в watched state
         // у поста будет id фида и его id, а у фида только id самого фида
       })
       .catch((error) => {
-        watchedState.form.valid = false;
-        watchedState.form.error = error.message ?? 'defaultError';
-        watchedState.form.processState = 'error';
+        watchedState.valid = false;
+        watchedState.process.error = error.message ?? 'defaultError';
+        watchedState.process.processState = 'error';
       });
   });
 

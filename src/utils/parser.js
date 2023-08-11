@@ -1,9 +1,19 @@
 export default (data) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(data, 'application/xml'); // returns a document HTML/XML
-  const error = doc.querySelector('parsererror');
+  const errorNode = doc.querySelector('parsererror');
 
-  if (error) throw new Error('invalidRss');
+  console.log(errorNode);
+
+  const errorvalue = errorNode.querySelector('div');
+
+  const parserErrors = {
+    error: errorvalue.textContent,
+  };
+
+  console.log(parserErrors);
+
+  if (errorNode) throw new Error('invalidRss');
 
   const channel = doc.querySelector('channel'); // внутри него лежит весь документ rss
   const titleF = channel.querySelector('title').textContent;
@@ -22,6 +32,5 @@ export default (data) => {
     return post;
   });
 
-  // console.log(channel.innerHTML);
   return { feed, posts };
 };

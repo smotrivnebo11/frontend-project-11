@@ -128,7 +128,7 @@ const handleProcessState = (elements, processState, watchedState, i18nInstance) 
 
     case 'error':
       elements.submitButton.disabled = false;
-      handleError(elements, watchedState.form.error, i18nInstance, watchedState);
+      handleError(elements, watchedState.process.error, i18nInstance, watchedState);
       break;
 
     case 'sending':
@@ -150,19 +150,19 @@ export default (elements, watchedState, i18nInstance) => (path, value) => {
   switch (path) {
     // path - ключи в state
     // в зависимости от значения ключа в state мы делаем манипуляции
-    case 'form.valid':
+    case 'valid':
       // валидность формы влияет на активность кнопки submit
       elements.submitButton.disabled = !value;
       break;
 
-    case 'form.processState':
+    case 'process.processState':
       // запускает функцию handleProcessState для переключения состояния processState
       handleProcessState(elements, value, watchedState, i18nInstance);
       break;
 
-    case 'form.error':
+    case 'process.error':
       // запускает функцию для обработки ошибок
-      handleError(elements, watchedState.form.error, i18nInstance);
+      handleError(elements, watchedState.process.error, i18nInstance);
       break;
 
     case 'uiState.modalPostId':
