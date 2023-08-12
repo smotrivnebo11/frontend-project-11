@@ -9,12 +9,10 @@ import parse from '../utils/parser.js';
 
 const timeOut = 5000;
 
-// проверяемый урл и список урлов которые уже были загружены
+// валидация: проверяемый урл и список урлов которые уже были загружены
 const validateURL = (url, existedUrls) => {
-  // схема валидации: строка, урл, не один из списка уже загруженных
   const schema = yup.string().url().notOneOf(existedUrls);
-  return schema.validate(url); // асинхронный метод
-  // returns a Promise object, that is fulfilled with the VALUE, or rejected with a ValidationError.
+  return schema.validate(url);
 };
 
 const getOriginsProxy = (url) => { // прокси прослойка между пользователем и сервером
@@ -70,15 +68,15 @@ export default (i18nInstance) => { // основная функция
     valid: true, // false
     process: {
       processState: 'filling', // sending, sent, error
-      error: '', // ошибка выдается уже после submit
+      error: '',
     },
     uiState: {
       modalPostId: '',
-      visitedPostId: new Set(), // объект для хранения уникальных значений
+      visitedPostId: new Set(),
     },
     posts: [],
     feeds: [],
-    existedUrls: [], // те урлы которые уже вводили
+    existedUrls: [],
   };
 
   const watchedState = onChange(initialState, render(elements, initialState, i18nInstance));
@@ -87,9 +85,8 @@ export default (i18nInstance) => { // основная функция
   elements.form.addEventListener('submit', (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
-    const inputURL = formData.get('url').trim(); // то, что ввел пользователь
+    const inputURL = formData.get('url').trim();
 
-    // сравниваем наш урл с теми урлами которые уже есть чтобы избежать дублирования
     validateURL(inputURL, watchedState.existedUrls)
       .then(() => {
         watchedState.valid = true;
@@ -104,8 +101,6 @@ export default (i18nInstance) => { // основная функция
         watchedState.feeds.push({ ...feed, id: feedId, link: inputURL });
         makePosts(watchedState, posts, feedId);
         watchedState.process.processState = 'sent'; // success
-        // присвоить id фидам и добавить фиды и посты в соответствующие массивы в watched state
-        // у поста будет id фида и его id, а у фида только id самого фида
       })
       .catch((error) => {
         watchedState.valid = false;

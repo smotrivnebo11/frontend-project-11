@@ -88,9 +88,6 @@ const buildContainer = (type, watchedState, elements, i18nInstance) => {
 
 const handleModal = (watchedState, elements, postId) => {
   const pickedPost = watchedState.posts.find(({ id }) => id === postId);
-  // Метод find() возвращает значение первого найденного в массиве элемента,
-  // которое удовлетворяет условию переданному в callback функции.
-  // В противном случае возвращается undefined.
   const { title, description, link } = pickedPost;
 
   elements.modal.head.textContent = title;
@@ -137,7 +134,7 @@ const handleProcessState = (elements, processState, watchedState, i18nInstance) 
       break;
 
     case 'filling':
-      // форма в состоянии заполнения и заполнена без ошибок = тогда кнопка активна
+      // форма в состоянии заполнения, кнопка активна
       elements.submitButton.disabled = false;
       break;
 
@@ -148,20 +145,16 @@ const handleProcessState = (elements, processState, watchedState, i18nInstance) 
 
 export default (elements, watchedState, i18nInstance) => (path, value) => {
   switch (path) {
-    // path - ключи в state
-    // в зависимости от значения ключа в state мы делаем манипуляции
+    // path - ключи в watchedState
     case 'valid':
-      // валидность формы влияет на активность кнопки submit
       elements.submitButton.disabled = !value;
       break;
 
     case 'process.processState':
-      // запускает функцию handleProcessState для переключения состояния processState
       handleProcessState(elements, value, watchedState, i18nInstance);
       break;
 
     case 'process.error':
-      // запускает функцию для обработки ошибок
       handleError(elements, watchedState.process.error, i18nInstance);
       break;
 
